@@ -7,7 +7,7 @@
        
         {{-- new section /body --}}
         <section class="section column w-full g-10px body">
-            @isset(Auth::guard('users')->user()->palmpay_account)
+            @isset(Auth::guard('users')->user()->paga_account)
                  {{-- new column --}}
             <div class="column max-w-500">
                 <strong class="desc font-weight-900">Bank details</strong>
@@ -20,12 +20,12 @@
                <div class="w-full g-5px br-5px border-bottom-width-1px border-bottom-color-rgt-01 border-bottom-style-dashed p-10px column">
                <span class="opacity-05 font-size-07">Account Number</span>
                <div class="row align-center g-10px">
-               <strong class="font-size-1 font-weight-700">{{ json_decode(Auth::guard('users')->user()->palmpay_account)->account_number }}</strong>
+               <strong class="font-size-1 font-weight-700">{{ json_decode(Auth::guard('users')->user()->paga_account)->account_number }}</strong>
                 <span x-data="{ 
                     Copied : false
                  }" class="c-primary-light">
                     <svg x-on:click="
-                    copy('{{ json_decode(Auth::guard('users')->user()->palmpay_account)->account_number }}');
+                    copy('{{ json_decode(Auth::guard('users')->user()->paga_account)->account_number }}');
                     Copied = true;
                     setTimeout(() => {
                         Copied = false;
@@ -40,15 +40,15 @@
                <div class="w-full br-5px g-5px border-bottom-width-1px border-bottom-color-rgt-01 border-bottom-style-dashed p-10px column">
                <span class="opacity-05 font-size-07">Bank</span>
                <div class="row align-center g-5px">
-                <img src="{{ asset('banners/IMG_7922.png?v=1.3') }}" alt="" class="w-20px">
-               <strong class="font-size-1 font-weight-700">{{ json_decode(Auth::guard('users')->user()->palmpay_account)->bank_name }}</strong>
+                <img src="{{ asset('banners/IMG_7927.png') }}" alt="" class="w-20px">
+               <strong class="font-size-1 font-weight-700">{{ json_decode(Auth::guard('users')->user()->paga_account)->bank_name }}</strong>
 
                </div>
                </div>
                  {{-- new --}}
                <div class="w-full br-5px g-5px p-10px column">
                <span class="opacity-05 font-size-07">Account Name</span>
-               <strong class="font-size-1 font-weight-700">{{ json_decode(Auth::guard('users')->user()->palmpay_account)->account_name }}</strong>
+               <strong class="font-size-1 font-weight-700">{{ json_decode(Auth::guard('users')->user()->paga_account)->account_name }}</strong>
                </div>
                <div class="hr" vitecss-type="dotted"></div>
                <small class="opacity-07 m-top-5px text-center">Your account is automatically funded upon making a successfull transfer</small>
@@ -56,10 +56,10 @@
             @else
             {{-- new column --}}
             <div class="column w-full max-w-500 m-x-auto">
-                <strong class="desc font-weight-900">Palmpay payment gateway</strong>
-                <span class="opacity-07">Fill the form below to create your payment gateway</span>
+                <strong class="desc font-weight-900">Create your bank account</strong>
+                <span class="opacity-07">Fill the form below to create your payment bank account</span>
             </div>
-              <form method="POST" action="{{ url('users/post/generate/palmpay/account/process') }}" onsubmit="PostRequest(event,this,Updated)" class="analytics p-20px column br-10px box-shadow w-full bg-light max-w-500 m-x-auto column g-10">
+              <form method="POST" action="{{ url('users/post/generate/paga/account/process') }}" onsubmit="PostRequest(event,this,Updated)" class="analytics p-20px column br-10px box-shadow w-full bg-light max-w-500 m-x-auto column g-10">
                <div class="column w-full align-center g-10 justify-center">
             </div>
                 {{-- csrf token --}}
@@ -86,12 +86,12 @@
                 </div>
                </div>
                 
-             <button class="post">Create my gateway</button>
+             <button class="post">Create my account</button>
             </form>
             @endisset
           
         
-            @isset(Auth::guard('users')->user()->palmpay_account)
+            @isset(Auth::guard('users')->user()->paga_account)
                    {{-- group --}}
           <section class="group w-full box-shadow column g-10">
              
