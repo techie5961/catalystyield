@@ -794,7 +794,7 @@ class UsersPostRequestController extends Controller
                 'reference' => GenerateID(),
                 'firstName' => trim(request('first_name')),
                 'lastName' => trim(request('last_name')),
-                'webhookUrl' => url('aspfiy/paga/verify/webhook/process'),
+                'webhookUrl' => secure_url('aspfiy/paga/verify/webhook/process'),
                 'phone' => Auth::guard('users')->user()->phone
             ]);
             if($response->successful()){
@@ -863,7 +863,7 @@ class UsersPostRequestController extends Controller
                 'reference' => GenerateID(),
                 'firstName' => trim(request('first_name')),
                 'lastName' => trim(request('last_name')),
-                'webhookUrl' => url('aspfiy/palmpay/verify/webhook/process'),
+                'webhookUrl' => secure_url('aspfiy/palmpay/verify/webhook/process'),
                 'phone' => Auth::guard('users')->user()->phone
             ]);
             if($response->successful()){
