@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\CurrencyHelper;
+use Illuminate\Support\Facades\Log;
 
 class UsersPostRequestController extends Controller
 {
@@ -901,6 +902,7 @@ class UsersPostRequestController extends Controller
     
     // aspfiy palmpay webhook
     public function AspfiyPalmpayWebhook(){
+        Log::info('Palmpay webhook reached');
         try{
             $secret_key=env('ASPFIY_SECRET_KEY');
         $signature=request()->header('x-wiaxy-signature');
