@@ -87,6 +87,7 @@
                     let data=JSON.parse(response);
                     CreateNotify(data.status,data.message);
                     if(data.status == 'success'){
+                        Overlay=false;
                         Vitecss.navigate('{{ url('users/transactions') }}')
                     }
             })" method="POST" action="{{ url('users/post/deposi/checkout/process') }}" class="w-full column g-10px">
