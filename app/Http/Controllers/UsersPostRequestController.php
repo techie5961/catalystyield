@@ -61,7 +61,7 @@ class UsersPostRequestController extends Controller
         'phone' => $phone,
         'name' => $phone,
         'email' => $phone.'@'.str_replace(['http://','https://'],'',env('APP_URL')),
-        'main_balance' => $finance_settings->welcome_bonus,
+        'deposit_balance' => $finance_settings->welcome_bonus,
         'ref' => $upline,
         'password' => Hash::make(request('password')),
         'status' => 'active',
@@ -504,7 +504,14 @@ class UsersPostRequestController extends Controller
 
         if($amount == 0){
             return response()->json([
-                'message' => 'Please enter a vaild amount',
+                'message' => 'Please enter a valid amount',
+                'status' => 'error'
+            ]);
+        }
+
+        if(!DB::table('purchased')->where('status','active')->where('user_id',Auth::guard('users')->user()->id)->exists()){
+             return response()->json([
+                'message' => 'You must invest before placing withdrawal',
                 'status' => 'error'
             ]);
         }
@@ -1153,6 +1160,95 @@ public function NekpayDepositInitiate(){
    
 }
 
+// manual deposit initiate
+public function ManualDepositinitiate(){
+     $validator=Validator::make(request()->all(),[
+        'Amount' => 'required|numeric|min:'.DB::table('packages')->where('status','active')->orderBy('cost','asc')->first()->cost.''
+    ],[
+        'Amount.min' => 'Minimum deposit is '.CurrencyHelper::format(DB::table('packages')->where('status','active')->orderBy('cost','asc')->first()->cost,'NGN',Auth::guard('users')->user()->display_currency).''
+    ]);
+    if($validator->fails()){
+        return response()->json([
+            'message' => $validator->errors()->first(),
+            'status' => 'error'
+        ]);
+    }
+            
+              $id=DB::table('transactions')->insertGetId([
+                    'uniqid' => GenerateID(),
+                    'user_id' => Auth::guard('users')->user()->id,
+                    'title' => 'Recharge via kuda',
+                    'class' => 'credit',
+                    'type' => 'deposit',
+                    'amount' => request('Amount'),
+                    'fee' => 0,
+                    'icon' => '',
+                    'wallet' => json_encode([
+                        'from' => [
+                        'method' => 'manual',
+                        
+                    ],
+                    'to' => 'deposit_balance',
+
+
+                    ]),
+                    'data' => json_encode([
+                       'Gateway' => 'Manual',
+                       'Account Number' => '3002523887',
+                       'Account Name' => 'David James',
+                       'Bank' => 'Kuda Bank'
+
+                    ]),
+                    'json' => json_encode([
+                    'balance' => [
+                    'before' => 0,
+                    'after' => 0
+                    ],
+                    'primary_wallet' => 'Deposit Wallet'
+
+                    ]),
+                    
+                    'status' => 'initiated',
+                    'updated' => Carbon::now(),
+                    'date' => Carbon::now()
+                    ]);
+    return response()->json([
+        'message' => 'Deposit request initiated successfully, redirecting...',
+        'status' => 'success',
+        'url' => url('users/deposit/checkout?id='.$id.'')
+    ]);
+}
+
+// manual checkout
+public function ManualCheckout(){
+    $validator=Validator::make(request()->all(),[
+        'id' => 'required|regex:/^[0-9]+$/|exists:transactions,id',
+        'full_name' => 'required|string',
+        'bank_name' => 'required|string'
+    ]);
+    if($validator->fails()){
+        return response()->json([
+            'message' => $validator->errors()->first(),
+            'status' => 'error'
+        ]);
+    }
+
+    DB::table('transactions')->where('id',request('id'))->update([
+        'status' => 'pending',
+        'data' => json_encode([
+            'Gateway' => 'Manual',
+            'Sender Name' => request('full_name'),
+            'Sender Bank' => request('bank_name'),
+
+      ]),
+    ]);
+
+    return response()->json([
+        'message' => 'Recharge Submitted successfully',
+        'status' => 'success'
+    ]);
+    
+}
 // nekpay payment webhook
 public function NekpayPaymentWebhook(){
      $postData = request()->all();

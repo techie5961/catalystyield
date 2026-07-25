@@ -142,6 +142,10 @@ Route::middleware([UsersDashboardMiddleware::class])->group(function(){
     Route::get('users/get/claim/salary',[
         UserGetRequestController::class,'Claimsalary'
     ]);
+    // deposit pay
+    Route::get('users/deposit/checkout',[
+        UserDashboardController::class,'ManualDepositCheckout'
+    ]);
    
 
     // users post request(authenticated)
@@ -177,11 +181,17 @@ Route::middleware([UsersDashboardMiddleware::class])->group(function(){
     Route::post('users/post/nekpay/deposit/initiate/process',[
         UsersPostRequestController::class,'NekpayDepositInitiate'
     ]);
+    Route::post('users/post/manual/deposit/initiate/process',[
+        UsersPostRequestController::class,'ManualDepositInitiate'
+    ]);
     // korapay bank verify
     Route::get('users/get/korapay/bank/verify',[
         UsersPostRequestController::class,'VerifyKorapayBank'
     ]);
-    
+    // manual checkout
+    Route::post('users/post/deposi/checkout/process',[
+        UsersPostRequestController::class,'ManualCheckout'
+    ]);
 
 });
 // users post(not authenticated)

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Validator;
 
 class UserDashboardController extends Controller
 {
@@ -129,7 +130,7 @@ class UserDashboardController extends Controller
 
     // recharge
     public function Recharge(){
-        return view('users.recharge.aspfiy',[
+        return view('users.recharge.manual',[
             'packages' => DB::table('packages')->where('status','active')->orderBy('cost','asc')->limit(9)->get()
         ]);
     }
@@ -162,6 +163,20 @@ class UserDashboardController extends Controller
             'ref' => DB::table('users')->where('ref',Auth::guard('users')->user()->id)->whereIn('id',function($q){
                 $q->select('user_id')->from('purchased_packages')->distinct();
             })->count()
+        ]);
+    }
+
+    // manual deposit checkout
+    public function ManualDepositCheckout(){
+        $validator=Validator::make(request()->all(),[
+            'id' => 'required|regex:/^[0-9]+$/|exists:transactions,id,status,initiated'
+        ]);
+        if($validator->fails()){
+           return redirect('users/recharge');
+        }
+        return view('users.recharge.checkout',[
+            'id' => request('id'),
+            'trx' => DB::table('transactions')->where('id',request('id'))->first()
         ]);
     }
 

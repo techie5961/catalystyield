@@ -27,7 +27,7 @@ class CurrencyHelper
     /**
      * Format currency with conversion
      */
-    public static function format($amount, $from = 'NGN', $to = 'NGN')
+    public static function format($amount, $from = 'NGN', $to = 'NGN',$decimals = 2)
     {
         // Convert amount
         $converted = self::convert($amount, $from, $to);
@@ -36,7 +36,6 @@ class CurrencyHelper
         $symbol = self::SYMBOLS[$to] ?? $to;
         
         // Format: USD has 2 decimals, NGN has 0
-        $decimals = $to === 'NGN' ? 2 : 2;
         $formatted = number_format($converted, $decimals);
         
         return $symbol . $formatted;
